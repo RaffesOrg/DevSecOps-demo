@@ -1,15 +1,13 @@
-// server.js
 const http = require('http');
-
-const hostname = '127.0.0.1';
-const port = 3000;
+const url = require('url');
+const validator = require('validator');  // Using a library to escape input
 
 const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello, World!\n');
+  const queryObject = url.parse(req.url, true).query;
+  const message = queryObject.message ? validator.escape(queryObject.message) : "Hello World";
+  res.end(`<h1>${message}</h1>`);  // XSS is now mitigated
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+server.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
